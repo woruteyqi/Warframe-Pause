@@ -1,8 +1,8 @@
 ﻿// 墙中人.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 
 #include "ColorfulConsoleIO.hpp"
-#include "interception.h"//键鼠
-#include "libop.h" //libop接口的头文件
+#include "Interception\interception.h"//键鼠
+#include "Op\libop.h" //libop接口的头文件
 #include <iomanip>
 #include <iostream>
 #include <sstream>

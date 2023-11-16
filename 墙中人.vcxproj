@@ -131,17 +131,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ColorfulConsoleIO.hpp" />
-    <ClInclude Include="interception.h" />
-    <ClInclude Include="libop.h" />
+    <ClInclude Include="Interception\interception.h" />
+    <ClInclude Include="Op\libop.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="interception.dll" />
-    <None Include="op_x64.dll" />
-    <None Include="tess_model\chi_sim.traineddata" />
+    <None Include="Interception\interception.dll" />
+    <None Include="Op\chi_sim.traineddata" />
+    <None Include="Op\op_x64.dll" />
     <None Include="test.dict" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="interception.lib" />
+    <Library Include="Interception\interception.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

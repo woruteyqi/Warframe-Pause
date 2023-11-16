@@ -13,13 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="OP">
+    <Filter Include="Op">
       <UniqueIdentifier>{5db1529f-a509-473e-b79f-073bb3949919}</UniqueIdentifier>
     </Filter>
-    <Filter Include="OP\tess_model">
-      <UniqueIdentifier>{d77a9fa4-0db3-4d3b-89b9-90896603f83f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="interception">
+    <Filter Include="Interception">
       <UniqueIdentifier>{6dafddd7-90ce-4714-9ce4-78967225070e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -29,33 +26,33 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="libop.h">
-      <Filter>OP</Filter>
-    </ClInclude>
-    <ClInclude Include="interception.h">
-      <Filter>interception</Filter>
-    </ClInclude>
     <ClInclude Include="ColorfulConsoleIO.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Op\libop.h">
+      <Filter>Op</Filter>
+    </ClInclude>
+    <ClInclude Include="Interception\interception.h">
+      <Filter>Interception</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="tess_model\chi_sim.traineddata">
-      <Filter>OP\tess_model</Filter>
-    </None>
-    <None Include="op_x64.dll">
-      <Filter>OP</Filter>
-    </None>
     <None Include="test.dict">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="interception.dll">
-      <Filter>interception</Filter>
+    <None Include="Op\chi_sim.traineddata">
+      <Filter>Op</Filter>
+    </None>
+    <None Include="Op\op_x64.dll">
+      <Filter>Op</Filter>
+    </None>
+    <None Include="Interception\interception.dll">
+      <Filter>Interception</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="interception.lib">
-      <Filter>interception</Filter>
+    <Library Include="Interception\interception.lib">
+      <Filter>Interception</Filter>
     </Library>
   </ItemGroup>
 </Project>
