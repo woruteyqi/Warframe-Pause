@@ -136,12 +136,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Interception\interception.dll" />
-    <None Include="Op\chi_sim.traineddata" />
     <None Include="Op\op_x64.dll" />
+    <None Include="Op\tess_model\chi_sim.traineddata" />
     <None Include="test.dict" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Interception\interception.lib" />
+    <Library Include="Op\bin\x64\op_x64.lib" />
+    <Library Include="Op\bin\x64\pyop.lib" />
+    <Library Include="Op\bin\x64\tools.lib" />
+    <Library Include="Op\bin\x86\op_x86.lib" />
+    <Library Include="Op\bin\x86\pyop.lib" />
+    <Library Include="Op\bin\x86\tools.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
