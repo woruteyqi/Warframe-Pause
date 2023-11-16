@@ -1,21 +1,20 @@
 ﻿// 墙中人.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 
 #include "ColorfulConsoleIO.hpp"
-#include "Interception\interception.h"//键鼠
-#include "Op\libop.h" //libop接口的头文件
+#include "Interception/interception.h"//键鼠
+#include "Op/libop.h" //libop接口的头文件
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <thread>
 #include <time.h>
-#include <vector>
 #include <Windows.h>
-#pragma comment(lib,"interception.lib")
+#pragma comment(lib,"Interception/interception.lib")
 #ifdef _M_X64
-#pragma comment(lib,"bin/x64/op_x64.lib") //64位lib
+#pragma comment(lib,"Op/bin/x64/op_x64.lib") //64位lib
 #else
-#pragma comment(lib,"bin/x86/op_x86.lib") //32位lib
+#pragma comment(lib,"Op/bin/x86/op_x86.lib") //32位lib
 #endif
 
 

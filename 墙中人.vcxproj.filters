@@ -19,6 +19,18 @@
     <Filter Include="Interception">
       <UniqueIdentifier>{6dafddd7-90ce-4714-9ce4-78967225070e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Op\tess_model">
+      <UniqueIdentifier>{c577b7bd-c63b-433b-9929-ef90110f4eb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Op\bin">
+      <UniqueIdentifier>{4fac8606-aee3-4b77-9d34-57b948ae20df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Op\bin\x86">
+      <UniqueIdentifier>{f169fa37-0338-4957-bd2f-4a4ee61fe68c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Op\bin\x64">
+      <UniqueIdentifier>{b983b67c-f882-4a76-9b94-a9976185e012}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="墙中人.cpp">
@@ -40,19 +52,37 @@
     <None Include="test.dict">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="Op\chi_sim.traineddata">
-      <Filter>Op</Filter>
-    </None>
     <None Include="Op\op_x64.dll">
       <Filter>Op</Filter>
     </None>
     <None Include="Interception\interception.dll">
       <Filter>Interception</Filter>
     </None>
+    <None Include="Op\tess_model\chi_sim.traineddata">
+      <Filter>Op\tess_model</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Interception\interception.lib">
       <Filter>Interception</Filter>
+    </Library>
+    <Library Include="Op\bin\x86\op_x86.lib">
+      <Filter>Op\bin\x86</Filter>
+    </Library>
+    <Library Include="Op\bin\x86\pyop.lib">
+      <Filter>Op\bin\x86</Filter>
+    </Library>
+    <Library Include="Op\bin\x86\tools.lib">
+      <Filter>Op\bin\x86</Filter>
+    </Library>
+    <Library Include="Op\bin\x64\op_x64.lib">
+      <Filter>Op\bin\x64</Filter>
+    </Library>
+    <Library Include="Op\bin\x64\pyop.lib">
+      <Filter>Op\bin\x64</Filter>
+    </Library>
+    <Library Include="Op\bin\x64\tools.lib">
+      <Filter>Op\bin\x64</Filter>
     </Library>
   </ItemGroup>
 </Project>
