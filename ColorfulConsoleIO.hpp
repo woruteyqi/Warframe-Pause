@@ -144,3 +144,23 @@ std::wostream& operator<< (std::wostream& os, ConsoleBackgroundColor data)
 
 	return os;
 }
+
+#define ºì×Ö std::wcout << ConsoleColor::Red;
+#define ÂÌ×Ö std::wcout << ConsoleColor::Green;
+#define À¶×Ö std::wcout << ConsoleColor::Blue;
+#define ºÚ×Ö std::wcout << ConsoleColor::Black;
+#define °××Ö std::wcout << ConsoleColor::White;
+#define ×Ï×Ö std::wcout << ConsoleColor::Purple;
+#define »Æ×Ö std::wcout << ConsoleColor::Yellow;
+#define Çà×Ö std::wcout << ConsoleColor::Cyan;
+
+#define ºìµ× std::wcout << ConsoleBackgroundColor::Red;
+#define ÂÌµ× std::wcout << ConsoleBackgroundColor::Green;
+#define À¶µ× std::wcout << ConsoleBackgroundColor::Blue;
+#define ºÚµ× std::wcout << ConsoleBackgroundColor::Black;
+#define °×µ× std::wcout << ConsoleBackgroundColor::White;
+#define ×Ïµ× std::wcout << ConsoleBackgroundColor::Purple;
+#define »Æµ× std::wcout << ConsoleBackgroundColor::Yellow;
+#define Çàµ× std::wcout << ConsoleBackgroundColor::Cyan;
+
+#define »¹Ô­ wcout << ConsoleBackgroundColor::None << ConsoleColor::None;

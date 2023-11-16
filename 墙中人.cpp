@@ -18,18 +18,7 @@
 #pragma comment(lib,"bin/x86/op_x86.lib") //32位lib
 #endif
 
-#define 白底 wcout << ConsoleBackgroundColor::White;
-#define 青底 wcout << ConsoleBackgroundColor::Cyan;
-#define 红底 wcout << ConsoleBackgroundColor::Red;
-#define 绿底 wcout << ConsoleBackgroundColor::Green;
-#define 黄底 wcout << ConsoleBackgroundColor::Yellow;
-#define 白字 wcout << ConsoleColor::White;
-#define 红字 wcout << ConsoleColor::Red;
-#define 黑字 wcout << ConsoleColor::Black;
-#define 绿字 wcout << ConsoleColor::Green;
-#define 蓝字 wcout << ConsoleColor::Blue;
-#define 青字 wcout << ConsoleColor::Cyan;
-#define 还原 wcout << ConsoleBackgroundColor::None << ConsoleColor::None;
+
 
 using namespace std;
 
