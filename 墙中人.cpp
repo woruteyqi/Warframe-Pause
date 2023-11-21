@@ -168,23 +168,23 @@ repuse:
 			op.SetWindowState((long)hwnd, 7, &tmp); //显示指定窗口
 		}
 		//比较颜色
-		op.CmpColor(Pos.X,Pos.Y, L"C60608-0F0608|B02828-102828", 0.9, &retcmp);
+		op.CmpColor(Pos.X,Pos.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);
 		if (!retcmp) { cout << GetTime().str(); 白底 黑字 cout << "氧气正常"; 还原 cout << "\r"; }
 		op.Sleep(1000, &tmp);				
 	}
 
-	cout << GetTime().str(); 红底 cout << "氧气过低，尝试暂停"; 还原 cout << "\n";
-	interception_send(context, device, (InterceptionStroke*)&ESCpush, 1);//发送按键
-	interception_send(context, device, (InterceptionStroke*)&ESCpop, 1);
-	
-	cout << GetTime().str() << "尝试暂停第 "; 绿字 cout << ++i; 还原 cout << " 次\n";
+	//再加判断防止碰到红色特效
+	op.CmpColor(Pos.X, Pos.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);
+	if (retcmp) {
+		cout << GetTime().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
+		interception_send(context, device, (InterceptionStroke*)&ESCpush, 1);//发送按键
+		interception_send(context, device, (InterceptionStroke*)&ESCpop, 1);
+		cout << GetTime().str() << "尝试暂停第 "; 绿字 cout << ++i; 还原 cout << " 次\n";
+		op.Sleep(1000, &tmp);
+		op.CmpColor(Pos.X, Pos.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);//再次确认
+	}
 
-	op.Sleep(1000, &tmp);
-
-	op.CmpColor(Pos.X, Pos.Y, L"C60608-0F0608|B02828-102828", 0.9, &retcmp);//再次确认
-
-
-	if (retcmp == 0) 
+	if (!retcmp) 
 	{
 		thr.detach();
 		cout << GetTime().str(); 绿底 黑字 cout << "暂停成功"; 还原 cout << "\n";
@@ -194,7 +194,6 @@ repuse:
 	{
 		cout << GetTime().str(); 黄底 黑字 cout << "暂停失败"; 还原 cout << "\n";
 	}
-	
 	
 
 	if (i > 10)
