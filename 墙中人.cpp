@@ -183,7 +183,7 @@ int main()
 				if (kstroke.code == 0x19)
 				{
 					interception_destroy_context(mcontext);
-					*(int*)ARG->flag =1;
+					*(int*)ARG->flag = 1;
 					break;
 				}
 				if (kstroke.code == 0x18)
@@ -219,11 +219,13 @@ repuse:
 		//比较颜色
 		op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);
 		if (!retcmp) { cout << GetTime().str(); 白底 黑字 cout << "氧气正常"; 还原 cout << "\r"; }
-		op.Sleep(1000, &tmp);				
+		op.Sleep(1000, &tmp);
+		//再加判断防止碰到红色特效
+		op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);
+		if (!retcmp) { cout << GetTime().str(); 白底 黑字 cout << "氧气正常"; 还原 cout << "\r"; }
 	}
 
-	//再加判断防止碰到红色特效
-	op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);
+
 	if (retcmp) {
 		cout << GetTime().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
 		interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);//发送按键
