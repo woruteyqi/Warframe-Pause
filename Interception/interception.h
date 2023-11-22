@@ -40,15 +40,15 @@ extern "C" {
 #define INTERCEPTION_KEYBOARD(index) ((index) + 1)
 
 #define INTERCEPTION_MOUSE(index) ((INTERCEPTION_MAX_KEYBOARD) + (index) + 1)
-
+//void *
 typedef void *InterceptionContext;
-
+//int
 typedef int InterceptionDevice;
-
+//int
 typedef int InterceptionPrecedence;
-
+//unsigned short
 typedef unsigned short InterceptionFilter;
-
+//int
 typedef int (*InterceptionPredicate)(InterceptionDevice device);
 
 enum InterceptionKeyState

@@ -19,14 +19,14 @@
 using namespace std;
 
 //坐标
-typedef struct 
+typedef struct _Pos
 {
 	int X;
 	int Y;
 }Pos;
 
 //参数
-typedef struct Args 
+typedef struct _Args 
 {
 	bool* flag;
 	InterceptionContext* Mcontext;
@@ -36,7 +36,7 @@ typedef struct Args
 	InterceptionStroke* Kstroke;
 	InterceptionMouseStroke* MPos;
 	InterceptionKeyStroke& Kkstroke;
-};
+}Args;
 //获取系统时间，返回流字符串
 static stringstream get_time()
 {
@@ -47,7 +47,7 @@ static stringstream get_time()
 	return ss;
 }
 
-static auto get_scren_size() 
+static Pos get_scren_size() 
 {
 	Pos ret = { GetSystemMetrics(SM_CXSCREEN),
 		GetSystemMetrics(SM_CYSCREEN) };
@@ -144,6 +144,7 @@ int main()
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);//提升进程优先级
 	cout << get_time().str(); wcout << "当前OP版本：" << vers << "\n";
 	cout << get_time().str() << "你的屏幕尺寸为：" << get_scren_size().X << "X" << get_scren_size().Y << "\n";
+	//获取键盘
 	Kcontext = interception_create_context();
 	interception_set_filter(Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN | INTERCEPTION_FILTER_KEY_UP);
 	cout << get_time().str() << "请按下键盘任意键以获取设备ID\n";
@@ -152,7 +153,7 @@ int main()
 	interception_receive(Kcontext, Kdevice, &Kstroke, 1);
 	cout << get_time().str() << "你的键盘ID为：" << Kdevice << "\n";
 	cout << get_time().str() << "你按下的按键扫描码为：" << showbase << hex << Kkstroke.code << dec << "\n";
-
+	//获取鼠标
 	Mcontext = interception_create_context();
 	interception_set_filter(Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_ALL);
 	cout << get_time().str() << "请按下鼠标任意键以获取设备ID\n";
@@ -161,11 +162,9 @@ int main()
 	interception_receive(Mcontext, Mdevice, &Mstroke, 1);
 	cout << get_time().str() << "你的鼠标ID为：" << Mdevice << "\n";
 	cout << get_time().str() << "你按下的按键扫描码为：" << showbase << hex << Mkstroke.state << dec << "\n";
-
-	Sleep(1000);
+	//选择情况
 	if (hwnd = FindWindowA("WarframePublicEvolutionGfxD3D12", "Warframe")) { cout << get_time().str()<< "窗口句柄：" << hwnd << "\n"; }
 	else { cout << get_time().str() << "获取窗口句柄失败，游戏未打开？"; return -111; }
-	Sleep(1000);
 	cout << get_time().str() 
 		<< "请按下键盘上1~4来选择你的目前情况\n"
 		<< ">1:左上角小地图，普通生存\n"
@@ -186,9 +185,7 @@ int main()
 			cout << get_time().str(); 红字 cout << "选择错误\r"; 还原
 		}	
 	}
-
 	cout << get_time().str() << "你选择了 "; 青字 cout << "[ ";
-
 	switch (ePos)
 	{
 		case 2:
@@ -241,8 +238,8 @@ repuse:
 			return -1;
 		} 
 
-		op.GetWindowState((long)&hwnd, 1, &state[1]); //检测是否激活
-		op.GetWindowState((long)&hwnd, 2, &state[2]); //检测是否可见
+		op.GetWindowState((long)hwnd, 1, &state[1]); //检测是否激活
+		op.GetWindowState((long)hwnd, 2, &state[2]); //检测是否可见
 		if (!(state[1] && state[0])) 
 		{
 			op.SetWindowState((long)hwnd, 1, &tmp); //激活指定窗口
