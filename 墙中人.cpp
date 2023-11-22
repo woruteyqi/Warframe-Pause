@@ -238,12 +238,12 @@ repuse:
 			return -1;
 		} 
 
-		op.GetWindowState((long)hwnd, 1, &state[1]); //检测是否激活
-		op.GetWindowState((long)hwnd, 2, &state[2]); //检测是否可见
+		op.GetWindowState(reinterpret_cast<long&>(hwnd), 1, &state[1]); //检测是否激活
+		op.GetWindowState(reinterpret_cast<long&>(hwnd), 2, &state[2]); //检测是否可见
 		if (!(state[1] && state[0])) 
 		{
-			op.SetWindowState((long)hwnd, 1, &tmp); //激活指定窗口
-			op.SetWindowState((long)hwnd, 7, &tmp); //显示指定窗口
+			op.SetWindowState(reinterpret_cast<long&>(hwnd), 1, &tmp); //激活指定窗口
+			op.SetWindowState(reinterpret_cast<long&>(hwnd), 7, &tmp); //显示指定窗口
 		}
 		//多次循环防止因特效误触发
 		for (size_t i = 0; i < 3; i++)
