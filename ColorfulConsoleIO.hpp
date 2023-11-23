@@ -163,4 +163,6 @@ std::wostream& operator<< (std::wostream& os, ConsoleBackgroundColor data)
 #define 黄底 std::wcout << ConsoleBackgroundColor::Yellow;
 #define 青底 std::wcout << ConsoleBackgroundColor::Cyan;
 
-#define 还原 wcout << ConsoleBackgroundColor::None << ConsoleColor::None;
+#define 还原 std::wcout << ConsoleBackgroundColor::None << ConsoleColor::None;
+#define 还原字体 std::wcout << ConsoleColor::None;
+#define 还原背景 std::wcout << ConsoleBackgroundColor::None;

@@ -226,63 +226,68 @@ int main()
 	
 	thread HotKey(hot_key,&ArgInterception);//开始线程
 	HotKey.detach();//分离线程
-repuse:
-	
-	while (retcmp == 0)
-	{	
-		//主动退出
-		if (flag == 1)
-		{
-			
-			cout << "\n" << get_time().str() << "已主动退出\n";
-			return -1;
-		} 
 
-		op.GetWindowState(reinterpret_cast<long&>(hwnd), 1, &state[1]); //检测是否激活
-		op.GetWindowState(reinterpret_cast<long&>(hwnd), 2, &state[2]); //检测是否可见
-		if (!(state[1] && state[0])) 
+	for (size_t i = 0; i < 10; i++)
+	{
+		while (retcmp == 0)
 		{
-			op.SetWindowState(reinterpret_cast<long&>(hwnd), 1, &tmp); //激活指定窗口
-			op.SetWindowState(reinterpret_cast<long&>(hwnd), 7, &tmp); //显示指定窗口
+			//主动退出
+			if (flag == 1)
+			{
+
+				cout << "\n" << get_time().str() << "已主动退出\n";
+				return -1;
+			}
+
+			op.GetWindowState(reinterpret_cast<long&>(hwnd), 1, &state[1]); //检测是否激活
+			op.GetWindowState(reinterpret_cast<long&>(hwnd), 2, &state[2]); //检测是否可见
+			if (!(state[1] && state[0]))
+			{
+				op.SetWindowState(reinterpret_cast<long&>(hwnd), 1, &tmp); //激活指定窗口
+				op.SetWindowState(reinterpret_cast<long&>(hwnd), 7, &tmp); //显示指定窗口
+			}
+
+			bool cmp[2] = { 0,0 };
+			//多次循环防止因特效误触发
+			for (size_t i = 0; i < 2; i++)
+			{
+				//比较颜色
+				static long t_cmp = 0;
+				op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &t_cmp);
+				cmp[i] = (static_cast<bool>(t_cmp));
+				if (cmp[i] == 0) { cout << get_time().str(); 白底 黑字 cout << "氧气正常"; 还原 cout << "\r"; }
+				else { cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\r"; }
+				Sleep(1000);
+			}
+			retcmp = cmp[0] && cmp[1];
 		}
-		//多次循环防止因特效误触发
-		for (size_t i = 0; i < 3; i++)
-		{
-			//比较颜色
-			op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);
-			if (!retcmp) { cout << get_time().str(); 白底 黑字 cout << "氧气正常"; 还原 cout << "\r"; }
-				else{ cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\r";	}
+
+
+		if (retcmp) {
+			cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
+			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);//发送按键
+			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpop, 1);
+			cout << get_time().str() << "尝试暂停第 "; 绿字 cout << i + 1; 还原 cout << " 次\n";
 			Sleep(1000);
+			op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);//再次确认
+		}
+
+		if (!retcmp)
+		{
+			cout << get_time().str(); 绿底 黑字 cout << "暂停成功"; 还原 cout << "\n";
+			interception_destroy_context(Kcontext);
+			interception_destroy_context(Mcontext);
+			return 666;
+		}
+		else
+		{
+			cout << get_time().str(); 黄底 黑字 cout << "暂停失败"; 还原 cout << "\n";
 		}
 	}
+		
+	cout << get_time().str() << "暂停失败次数过多，已自动退出\n";
+	interception_destroy_context(Kcontext);
+	interception_destroy_context(Mcontext);
+	return 0; 
 
-
-	if (retcmp) {
-		cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
-		interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);//发送按键
-		interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpop, 1);
-		cout << get_time().str() << "尝试暂停第 "; 绿字 cout << ++i; 还原 cout << " 次\n";
-		Sleep(1000);
-		op.CmpColor(氧气.X, 氧气.Y, L"C60608-0F0608|a82020-282020", 0.9, &retcmp);//再次确认
-	}
-
-	if (!retcmp) 
-	{
-		cout << get_time().str(); 绿底 黑字 cout << "暂停成功"; 还原 cout << "\n";
-		interception_destroy_context(Kcontext);
-		return 666;
-	}else
-	{
-		cout << get_time().str(); 黄底 黑字 cout << "暂停失败"; 还原 cout << "\n";
-	}
-	
-
-	if (i > 10)
-	{
-		cout << get_time().str() << "暂停失败次数过多，已自动退出\n";
-		interception_destroy_context(Kcontext);
-		return 0; 
-	}
-
-	goto repuse;
 }
