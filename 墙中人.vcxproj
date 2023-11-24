@@ -119,6 +119,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <ShowIncludes>true</ShowIncludes>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +141,6 @@
     <None Include="Interception\interception.dll" />
     <None Include="Op\op_x64.dll" />
     <None Include="Op\tess_model\chi_sim.traineddata" />
-    <None Include="test.dict" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Interception\interception.lib" />

@@ -120,7 +120,9 @@ int main()
 {	
 	libop				op;
 	wstring				vers = op.Ver();
-	HWND				hwnd = NULL; //窗口句柄
+	HWND				hwnd_game = NULL, //游戏窗口句柄
+						hwnd_console = NULL; //控制台窗口句柄
+	wchar_t				title[1024]; //控制台标题					
 	long				tmp = NULL; //临时返回变量
 	long				retcmp = NULL; //返回比较结果
 	long				state[2] = { NULL }; //窗口状态
@@ -131,7 +133,7 @@ int main()
 						核桃 = abs_pos(390,280, get_scren_size().X, get_scren_size().Y);
 	
 
-	InterceptionStroke		Kstroke,Mstroke;
+	InterceptionStroke		Kstroke{}, Mstroke{};
 	InterceptionKeyStroke&	Kkstroke = *(InterceptionKeyStroke*)&Kstroke;
 	InterceptionMouseStroke&Mkstroke = *(InterceptionMouseStroke*)&Mstroke;
 	InterceptionContext		Kcontext,Mcontext;
@@ -163,8 +165,16 @@ int main()
 	cout << get_time().str() << "你的鼠标ID为：" << Mdevice << "\n";
 	cout << get_time().str() << "你按下的按键扫描码为：" << showbase << hex << Mkstroke.state << dec << "\n";
 	//选择情况
-	if (hwnd = FindWindowA("WarframePublicEvolutionGfxD3D12", "Warframe")) { cout << get_time().str()<< "窗口句柄：" << hwnd << "\n"; }
-	else { cout << get_time().str() << "获取窗口句柄失败，游戏未打开？"; return -111; }
+	if (hwnd_game = FindWindow(L"WarframePublicEvolutionGfxD3D12", L"Warframe"))
+	{
+		GetConsoleTitle(title, 1024);
+		hwnd_console = FindWindow(NULL, title);
+		cout << get_time().str() << "游戏窗口句柄：" << hwnd_game << "\n"; 
+		cout << get_time().str() << "控制台窗口句柄：" << hwnd_console << "\n";
+	}else 
+	{ 
+		cout << get_time().str() << "获取游戏窗口句柄失败，游戏未打开？"; return -111;
+	}
 	cout << get_time().str() 
 		<< "请按下键盘上1~4来选择你的目前情况\n"
 		<< ">1:左上角小地图，普通生存\n"
@@ -234,17 +244,17 @@ int main()
 			//主动退出
 			if (flag == 1)
 			{
-
+				op.SetWindowState(reinterpret_cast<long&>(hwnd_console), 7, &tmp);
 				cout << "\n" << get_time().str() << "已主动退出\n";
 				return -1;
 			}
 
-			op.GetWindowState(reinterpret_cast<long&>(hwnd), 1, &state[1]); //检测是否激活
-			op.GetWindowState(reinterpret_cast<long&>(hwnd), 2, &state[2]); //检测是否可见
+			op.GetWindowState(reinterpret_cast<long&>(hwnd_game), 1, &state[1]); //检测是否激活
+			op.GetWindowState(reinterpret_cast<long&>(hwnd_game), 2, &state[2]); //检测是否可见
 			if (!(state[1] && state[0]))
 			{
-				op.SetWindowState(reinterpret_cast<long&>(hwnd), 1, &tmp); //激活指定窗口
-				op.SetWindowState(reinterpret_cast<long&>(hwnd), 7, &tmp); //显示指定窗口
+				op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 1, &tmp); //激活指定窗口
+				op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 7, &tmp); //显示指定窗口
 			}
 
 			bool cmp[2] = { 0,0 };
@@ -261,10 +271,12 @@ int main()
 			}
 			retcmp = cmp[0] && cmp[1];
 		}
-
+	
 
 		if (retcmp) {
 			cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
+			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1push, 1);
+			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1pop, 1);
 			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);//发送按键
 			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpop, 1);
 			cout << get_time().str() << "尝试暂停第 "; 绿字 cout << i + 1; 还原 cout << " 次\n";
@@ -284,7 +296,7 @@ int main()
 			cout << get_time().str(); 黄底 黑字 cout << "暂停失败"; 还原 cout << "\n";
 		}
 	}
-		
+	op.SetWindowState(reinterpret_cast<long&>(hwnd_console), 7, &tmp);
 	cout << get_time().str() << "暂停失败次数过多，已自动退出\n";
 	interception_destroy_context(Kcontext);
 	interception_destroy_context(Mcontext);

@@ -49,9 +49,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.dict">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="Op\op_x64.dll">
       <Filter>Op</Filter>
     </None>
