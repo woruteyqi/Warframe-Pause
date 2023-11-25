@@ -18,13 +18,12 @@ jobs:
         chcp 65001  # 设置控制台代码页为UTF-8以支持中文
         set LC_ALL=zh_CN.utf8  # 设置Unicode环境变量为UTF-8
         echo 设置语言环境为中文和Unicode
-        # 这里可以添加其他中文和Unicode环境需要的命令
         
-    - name: Checkout repository
+    - name: 检查储存库
       uses: actions/checkout@v4.1.1
 
-    - name: Set up MSBuild
+    - name: 设置MSBuild
       uses: microsoft/setup-msbuild@v1.3.1
 
     - name: 编译
-      run: msbuild /p:Configuration=Release /t:Build /p:WarningLevel=1 /p:DisableSpecificWarnings="4566"
+      run: msbuild /p:Configuration=Release /t:Build /p:WarningLevel=1 /p:nowarn=4566
