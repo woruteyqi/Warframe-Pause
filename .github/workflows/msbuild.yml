@@ -26,4 +26,4 @@ jobs:
       uses: microsoft/setup-msbuild@v1.3.1
 
     - name: 编译
-      run: msbuild /p:Configuration=Release /t:Build /p:WarningLevel=1 /p:nowarn=4566
+      run: msbuild /p:Configuration=Release /p:WarningLevel=1 /p:nowarn=4566 /t:Build 
