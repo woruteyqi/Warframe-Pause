@@ -121,6 +121,7 @@
       <ShowIncludes>true</ShowIncludes>
       <AdditionalOptions>
       </AdditionalOptions>
+      <DisableSpecificWarnings>4566</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -69,9 +69,6 @@
     <Library Include="Op\bin\x86\pyop.lib">
       <Filter>Op\bin\x86</Filter>
     </Library>
-    <Library Include="Op\bin\x86\tools.lib">
-      <Filter>Op\bin\x86</Filter>
-    </Library>
     <Library Include="Op\bin\x64\op_x64.lib">
       <Filter>Op\bin\x64</Filter>
     </Library>
@@ -80,6 +77,9 @@
     </Library>
     <Library Include="Op\bin\x64\tools.lib">
       <Filter>Op\bin\x64</Filter>
+    </Library>
+    <Library Include="Op\bin\x86\tools.lib">
+      <Filter>Op\bin\x86</Filter>
     </Library>
   </ItemGroup>
 </Project>
