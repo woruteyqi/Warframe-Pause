@@ -1,0 +1,23 @@
+name: C++ CI with MSBuild
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.1
+
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v1.3.1
+
+    - name: Build
+      run: msbuild /p:Configuration=Release /t:Build
