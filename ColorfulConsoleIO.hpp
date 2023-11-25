@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <string>
 #define IS_WINDOWS defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) && !defined(__CYGWIN__)
 
@@ -145,24 +145,24 @@ std::wostream& operator<< (std::wostream& os, ConsoleBackgroundColor data)
 	return os;
 }
 
-#define ºì×Ö std::wcout << ConsoleColor::Red;
-#define ÂÌ×Ö std::wcout << ConsoleColor::Green;
-#define À¶×Ö std::wcout << ConsoleColor::Blue;
-#define ºÚ×Ö std::wcout << ConsoleColor::Black;
-#define °××Ö std::wcout << ConsoleColor::White;
-#define ×Ï×Ö std::wcout << ConsoleColor::Purple;
-#define »Æ×Ö std::wcout << ConsoleColor::Yellow;
-#define Çà×Ö std::wcout << ConsoleColor::Cyan;
+#define çº¢å­— std::wcout << ConsoleColor::Red;
+#define ç»¿å­— std::wcout << ConsoleColor::Green;
+#define è“å­— std::wcout << ConsoleColor::Blue;
+#define é»‘å­— std::wcout << ConsoleColor::Black;
+#define ç™½å­— std::wcout << ConsoleColor::White;
+#define ç´«å­— std::wcout << ConsoleColor::Purple;
+#define é»„å­— std::wcout << ConsoleColor::Yellow;
+#define é’å­— std::wcout << ConsoleColor::Cyan;
 
-#define ºìµ× std::wcout << ConsoleBackgroundColor::Red;
-#define ÂÌµ× std::wcout << ConsoleBackgroundColor::Green;
-#define À¶µ× std::wcout << ConsoleBackgroundColor::Blue;
-#define ºÚµ× std::wcout << ConsoleBackgroundColor::Black;
-#define °×µ× std::wcout << ConsoleBackgroundColor::White;
-#define ×Ïµ× std::wcout << ConsoleBackgroundColor::Purple;
-#define »Æµ× std::wcout << ConsoleBackgroundColor::Yellow;
-#define Çàµ× std::wcout << ConsoleBackgroundColor::Cyan;
+#define çº¢åº• std::wcout << ConsoleBackgroundColor::Red;
+#define ç»¿åº• std::wcout << ConsoleBackgroundColor::Green;
+#define è“åº• std::wcout << ConsoleBackgroundColor::Blue;
+#define é»‘åº• std::wcout << ConsoleBackgroundColor::Black;
+#define ç™½åº• std::wcout << ConsoleBackgroundColor::White;
+#define ç´«åº• std::wcout << ConsoleBackgroundColor::Purple;
+#define é»„åº• std::wcout << ConsoleBackgroundColor::Yellow;
+#define é’åº• std::wcout << ConsoleBackgroundColor::Cyan;
 
-#define »¹Ô­ std::wcout << ConsoleBackgroundColor::None << ConsoleColor::None;
-#define »¹Ô­×ÖÌå std::wcout << ConsoleColor::None;
-#define »¹Ô­±³¾° std::wcout << ConsoleBackgroundColor::None;
+#define è¿˜åŽŸ std::wcout << ConsoleBackgroundColor::None << ConsoleColor::None;
+#define è¿˜åŽŸå­—ä½“ std::wcout << ConsoleColor::None;
+#define è¿˜åŽŸèƒŒæ™¯ std::wcout << ConsoleBackgroundColor::None;
