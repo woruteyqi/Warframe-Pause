@@ -3,6 +3,7 @@
 #include "ColorfulConsoleIO.hpp"
 #include "Interception/interception.h"//键鼠
 #include "Op/libop.h" //libop接口的头文件
+#include "ImGui/GUI.hpp"
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -26,7 +27,7 @@ typedef struct _Pos
 }Pos;
 
 //参数
-typedef struct _Args 
+struct ArgHotkey
 {
 	bool* flag;
 	InterceptionContext* Mcontext;
@@ -36,7 +37,9 @@ typedef struct _Args
 	InterceptionStroke* Kstroke;
 	InterceptionMouseStroke* MPos;
 	InterceptionKeyStroke& Kkstroke;
-}Args;
+};
+
+
 //获取系统时间，返回流字符串
 static stringstream get_time()
 {
@@ -77,20 +80,20 @@ static void lock_pos(InterceptionContext context, InterceptionDevice device, Int
 
 
 //快捷键功能
-static void hot_key(Args* ARG)
+static void hot_key(ArgHotkey ARG)
 {	
 	bool lock = 0;
-	interception_set_filter(*(InterceptionContext*)ARG->Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN);
-	while (interception_receive(*(InterceptionContext*)ARG->Kcontext, *(InterceptionDevice*)ARG->Kdevice = interception_wait(*(InterceptionContext*)ARG->Kcontext), (InterceptionStroke*)ARG->Kstroke, 1) > 0)
+	interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN);
+	while (interception_receive(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice = interception_wait(*(InterceptionContext*)ARG.Kcontext), (InterceptionStroke*)ARG.Kstroke, 1) > 0)
 	{
-		switch (ARG->Kkstroke.code)
+		switch (ARG.Kkstroke.code)
 		{
 		//O键锁定位置
 		case 0x18:
 			if (lock == 0)
 			{
 				lock = 1;
-				thread LockPos(lock_pos, *(InterceptionContext*)ARG->Mcontext, *(InterceptionDevice*)ARG->Mdevice, (InterceptionStroke*)ARG->MPos, &lock,ARG->flag);
+				thread LockPos(lock_pos, *(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.MPos, &lock,ARG.flag);
 				LockPos.detach();
 			}
 			else
@@ -100,16 +103,16 @@ static void hot_key(Args* ARG)
 			break;
 		//P键退出程序
 		case 0x19:
-			interception_set_filter(*(InterceptionContext*)ARG->Kcontext, interception_is_keyboard, NULL);
-			interception_destroy_context(*(InterceptionContext*)ARG->Kcontext);
-			interception_destroy_context(*(InterceptionContext*)ARG->Mcontext);
+			interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, NULL);
+			interception_destroy_context(*(InterceptionContext*)ARG.Kcontext);
+			interception_destroy_context(*(InterceptionContext*)ARG.Mcontext);
 			lock = 0;
 			Sleep(250);//让新开的线程都退出再结束程序主线程
-			*(int*)ARG->flag = 1;			
+			*(int*)ARG.flag = 1;			
 			break;
 
 		default:
-			interception_send(*(InterceptionContext*)ARG->Kcontext, *(InterceptionDevice*)ARG->Kdevice, (InterceptionStroke*)ARG->Kstroke, 1);
+			interception_send(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice, (InterceptionStroke*)ARG.Kstroke, 1);
 			break;
 		}		
 		
@@ -129,6 +132,7 @@ int main()
 	int					i = 0; //暂停次数
 	int					ePos = 0;//位置状态
 	bool				flag = NULL; //主动退出标志
+	bool				done = FALSE; //UI是否显示
 	Pos	static			氧气 = { 0,0 },
 						核桃 = abs_pos(390,280, get_scren_size().X, get_scren_size().Y);
 	
@@ -221,21 +225,21 @@ int main()
 	cout << get_time().str() << "程序运行时会保持游戏窗口处于前台激活，若要手动退出请按 "; 青底 黑字 cout << "[ P ]"; 还原 cout << " 键\n";
 	Sleep(1500);
 
-	//给线程函数传参
-	Args ArgInterception = {
-		& flag,
-		& Mcontext,
-		& Kcontext,
-		& Mdevice,
-		& Kdevice,
-		& Kstroke,
-		& MPos,
+	thread thrgui(maingui);
+
+	thread HotKey(hot_key, ArgHotkey{
+		&flag,
+		&Mcontext,
+		&Kcontext,
+		&Mdevice,
+		&Kdevice,
+		&Kstroke,
+		&MPos,
 		Kkstroke
-	};
-	
-	
-	thread HotKey(hot_key,&ArgInterception);//开始线程
+		});//开始线程
+
 	HotKey.detach();//分离线程
+	thrgui.detach();
 
 	for (size_t i = 0; i < 10; i++)
 	{
@@ -253,7 +257,7 @@ int main()
 			op.GetWindowState(reinterpret_cast<long&>(hwnd_game), 2, &state[2]); //检测是否可见
 			if (!(state[1] && state[0]))
 			{
-				op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 1, &tmp); //激活指定窗口
+				//op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 1, &tmp); //激活指定窗口
 				op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 7, &tmp); //显示指定窗口
 			}
 
