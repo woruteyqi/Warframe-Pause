@@ -25,8 +25,8 @@ typedef struct _Pos
 	int Y;
 }Pos;
 
-//参数
-typedef struct _Args 
+//快捷键函数参数
+struct Args
 {
 	bool* flag;
 	InterceptionContext* Mcontext;
@@ -36,7 +36,8 @@ typedef struct _Args
 	InterceptionStroke* Kstroke;
 	InterceptionMouseStroke* MPos;
 	InterceptionKeyStroke& Kkstroke;
-}Args;
+};
+
 //获取系统时间，返回流字符串
 static stringstream get_time()
 {
@@ -47,6 +48,7 @@ static stringstream get_time()
 	return ss;
 }
 
+//获取屏幕尺寸
 static Pos get_scren_size() 
 {
 	Pos ret = { GetSystemMetrics(SM_CXSCREEN),
@@ -75,22 +77,22 @@ static void lock_pos(InterceptionContext context, InterceptionDevice device, Int
 	
 }
 
-
 //快捷键功能
-static void hot_key(Args* ARG)
+static void hot_key(Args ARG)
 {	
 	bool lock = 0;
-	interception_set_filter(*(InterceptionContext*)ARG->Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN);
-	while (interception_receive(*(InterceptionContext*)ARG->Kcontext, *(InterceptionDevice*)ARG->Kdevice = interception_wait(*(InterceptionContext*)ARG->Kcontext), (InterceptionStroke*)ARG->Kstroke, 1) > 0)
+	interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN);
+	while (interception_receive(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice = interception_wait(*(InterceptionContext*)ARG.Kcontext), (InterceptionStroke*)ARG.Kstroke, 1) > 0)
 	{
-		switch (ARG->Kkstroke.code)
+		switch (ARG.Kkstroke.code)
 		{
+
 		//O键锁定位置
 		case 0x18:
 			if (lock == 0)
 			{
 				lock = 1;
-				thread LockPos(lock_pos, *(InterceptionContext*)ARG->Mcontext, *(InterceptionDevice*)ARG->Mdevice, (InterceptionStroke*)ARG->MPos, &lock,ARG->flag);
+				thread LockPos(lock_pos, *(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.MPos, &lock,ARG.flag);
 				LockPos.detach();
 			}
 			else
@@ -98,18 +100,19 @@ static void hot_key(Args* ARG)
 				lock = 0;
 			}
 			break;
+
 		//P键退出程序
 		case 0x19:
-			interception_set_filter(*(InterceptionContext*)ARG->Kcontext, interception_is_keyboard, NULL);
-			interception_destroy_context(*(InterceptionContext*)ARG->Kcontext);
-			interception_destroy_context(*(InterceptionContext*)ARG->Mcontext);
+			interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, NULL);
+			interception_destroy_context(*(InterceptionContext*)ARG.Kcontext);
+			interception_destroy_context(*(InterceptionContext*)ARG.Mcontext);
 			lock = 0;
 			Sleep(250);//让新开的线程都退出再结束程序主线程
-			*(int*)ARG->flag = 1;			
+			*(int*)ARG.flag = 1;			
 			break;
 
 		default:
-			interception_send(*(InterceptionContext*)ARG->Kcontext, *(InterceptionDevice*)ARG->Kdevice, (InterceptionStroke*)ARG->Kstroke, 1);
+			interception_send(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice, (InterceptionStroke*)ARG.Kstroke, 1);
 			break;
 		}		
 		
@@ -145,6 +148,7 @@ int main()
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);//提升进程优先级
 	cout << get_time().str(); wcout << "当前OP版本：" << vers << "\n";
 	cout << get_time().str() << "你的屏幕尺寸为：" << get_scren_size().X << "X" << get_scren_size().Y << "\n";
+
 	//获取键盘
 	Kcontext = interception_create_context();
 	interception_set_filter(Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN | INTERCEPTION_FILTER_KEY_UP);
@@ -154,6 +158,7 @@ int main()
 	interception_receive(Kcontext, Kdevice, &Kstroke, 1);
 	cout << get_time().str() << "你的键盘ID为：" << Kdevice << "\n";
 	cout << get_time().str() << "你按下的按键扫描码为：" << showbase << hex << Kkstroke.code << dec << "\n";
+
 	//获取鼠标
 	Mcontext = interception_create_context();
 	interception_set_filter(Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_ALL);
@@ -163,6 +168,7 @@ int main()
 	interception_receive(Mcontext, Mdevice, &Mstroke, 1);
 	cout << get_time().str() << "你的鼠标ID为：" << Mdevice << "\n";
 	cout << get_time().str() << "你按下的按键扫描码为：" << showbase << hex << Mkstroke.state << dec << "\n";
+
 	//选择情况
 	if (hwnd_game = FindWindow(L"WarframePublicEvolutionGfxD3D12", L"Warframe"))
 	{
@@ -214,28 +220,27 @@ int main()
 			氧气 = { 53, 167 };
 			break;
 	}
-
 	Sleep(1000);
 	cout << get_time().str() << "若要锁定鼠标到第一个核桃的位置，请按 "; 青底 黑字 cout << "[ O ]"; 还原 cout << " 键\n";
 	cout << get_time().str() << "程序运行时会保持游戏窗口处于前台激活，若要手动退出请按 "; 青底 黑字 cout << "[ P ]"; 还原 cout << " 键\n";
 	Sleep(1500);
 
-	//给线程函数传参
-	Args ArgInterception = {
-		& flag,
-		& Mcontext,
-		& Kcontext,
-		& Mdevice,
-		& Kdevice,
-		& Kstroke,
-		& MPos,
+	//开始线程
+	thread HotKey(hot_key, Args{
+		&flag,
+		&Mcontext,
+		&Kcontext,
+		&Mdevice,
+		&Kdevice,
+		&Kstroke,
+		&MPos,
 		Kkstroke
-	};
-	
-	
-	thread HotKey(hot_key,&ArgInterception);//开始线程
-	HotKey.detach();//分离线程
+	});
 
+	//分离线程
+	HotKey.detach();
+
+	//主流程循环
 	for (size_t i = 0; i < 10; i++)
 	{
 		while (retcmp == 0)
