@@ -3,10 +3,10 @@ name: C++ CI with MSBuild
 on:
   push:
     branches:
-      - master
+      - gui
   pull_request:
     branches:
-      - master
+      - gui
 
 jobs:
   build:
