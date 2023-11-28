@@ -118,31 +118,30 @@ static void hot_key(Args* ARG)
 
 int main()
 {	
-	libop				op;
-	wstring				vers = op.Ver();
-	HWND				hwnd_game = NULL, //游戏窗口句柄
-						hwnd_console = NULL; //控制台窗口句柄
-	wchar_t				title[1024]; //控制台标题					
-	long				tmp = NULL; //临时返回变量
-	long				retcmp = NULL; //返回比较结果
-	long				state[2] = { NULL }; //窗口状态
-	int					i = 0; //暂停次数
-	int					ePos = 0;//位置状态
-	bool				flag = NULL; //主动退出标志
-	Pos	static			氧气 = { 0,0 },
-						核桃 = abs_pos(390,280, get_scren_size().X, get_scren_size().Y);
+	//变量声明与初始化
+	libop						op;
+	wstring						vers = op.Ver();
+	HWND						hwnd_game = NULL, //游戏窗口句柄
+								hwnd_console = NULL; //控制台窗口句柄
+	wchar_t						title[1024]; //控制台标题					
+	long						tmp = NULL; //临时返回变量
+	long						retcmp = NULL; //返回比较结果
+	long						state[2] = { NULL }; //窗口状态
+	int							i = 0; //暂停次数
+	int							ePos = 0;//位置状态
+	bool						flag = NULL; //主动退出标志
+	Pos	static					氧气 = { 0,0 },
+								核桃 = abs_pos(390,280, get_scren_size().X, get_scren_size().Y);
+	InterceptionStroke			Kstroke{}, Mstroke{};
+	InterceptionKeyStroke&		Kkstroke = *(InterceptionKeyStroke*)&Kstroke;
+	InterceptionMouseStroke&	Mkstroke = *(InterceptionMouseStroke*)&Mstroke;
+	InterceptionContext			Kcontext,Mcontext;
+	InterceptionDevice			Kdevice,Mdevice;
+	InterceptionKeyStroke		ESCpush = { 0x01 ,INTERCEPTION_KEY_DOWN ,NULL }, ESCpop = { 0x01,INTERCEPTION_KEY_UP,NULL };
+	InterceptionMouseStroke		M1push = { INTERCEPTION_MOUSE_LEFT_BUTTON_DOWN, INTERCEPTION_MOUSE_MOVE_RELATIVE ,NULL,0,0 ,NULL },
+								M1pop = { INTERCEPTION_MOUSE_LEFT_BUTTON_UP, INTERCEPTION_MOUSE_MOVE_RELATIVE ,NULL,0,0 ,NULL },
+								MPos = { INTERCEPTION_FILTER_MOUSE_MOVE, INTERCEPTION_MOUSE_MOVE_ABSOLUTE ,NULL,核桃.X,核桃.Y ,NULL};
 	
-
-	InterceptionStroke		Kstroke{}, Mstroke{};
-	InterceptionKeyStroke&	Kkstroke = *(InterceptionKeyStroke*)&Kstroke;
-	InterceptionMouseStroke&Mkstroke = *(InterceptionMouseStroke*)&Mstroke;
-	InterceptionContext		Kcontext,Mcontext;
-	InterceptionDevice		Kdevice,Mdevice;
-	InterceptionKeyStroke	ESCpush = { 0x01 ,INTERCEPTION_KEY_DOWN ,NULL }, ESCpop = { 0x01,INTERCEPTION_KEY_UP,NULL };
-	InterceptionMouseStroke M1push = { INTERCEPTION_MOUSE_LEFT_BUTTON_DOWN, INTERCEPTION_MOUSE_MOVE_RELATIVE ,NULL,0,0 ,NULL },
-							M1pop= { INTERCEPTION_MOUSE_LEFT_BUTTON_UP, INTERCEPTION_MOUSE_MOVE_RELATIVE ,NULL,0,0 ,NULL },
-							MPos = { INTERCEPTION_FILTER_MOUSE_MOVE, INTERCEPTION_MOUSE_MOVE_ABSOLUTE ,NULL,核桃.X,核桃.Y ,NULL};
-
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);//提升进程优先级
 	cout << get_time().str(); wcout << "当前OP版本：" << vers << "\n";
 	cout << get_time().str() << "你的屏幕尺寸为：" << get_scren_size().X << "X" << get_scren_size().Y << "\n";
@@ -257,7 +256,7 @@ int main()
 				op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 7, &tmp); //显示指定窗口
 			}
 
-			bool cmp[2] = { 0,0 };
+			static bool cmp[2] = { 0,0 };
 			//多次循环防止因特效误触发
 			for (size_t i = 0; i < 2; i++)
 			{
@@ -276,8 +275,11 @@ int main()
 		if (retcmp) {
 			cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
 			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1push, 1);
+			Sleep(50);
 			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1pop, 1);
-			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);//发送按键
+			Sleep(150);
+			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);
+			Sleep(50);
 			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpop, 1);
 			cout << get_time().str() << "尝试暂停第 "; 绿字 cout << i + 1; 还原 cout << " 次\n";
 			Sleep(1000);
