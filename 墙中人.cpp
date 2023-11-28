@@ -257,7 +257,7 @@ int main()
 				op.SetWindowState(reinterpret_cast<long&>(hwnd_game), 7, &tmp); //显示指定窗口
 			}
 
-			bool cmp[2] = { 0,0 };
+			static bool cmp[2] = { 0,0 };
 			//多次循环防止因特效误触发
 			for (size_t i = 0; i < 2; i++)
 			{
@@ -276,8 +276,11 @@ int main()
 		if (retcmp) {
 			cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
 			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1push, 1);
+			Sleep(50);
 			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1pop, 1);
-			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);//发送按键
+			Sleep(150);
+			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);
+			Sleep(50);
 			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpop, 1);
 			cout << get_time().str() << "尝试暂停第 "; 绿字 cout << i + 1; 还原 cout << " 次\n";
 			Sleep(1000);
