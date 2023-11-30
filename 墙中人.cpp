@@ -34,7 +34,7 @@ struct Args
 	InterceptionDevice* Mdevice;
 	InterceptionDevice* Kdevice;
 	InterceptionStroke* Kstroke;
-	InterceptionMouseStroke* MPos;
+	InterceptionMouseStroke* MPos,*M1push,*M1pop;
 	InterceptionKeyStroke& Kkstroke;
 };
 
@@ -66,26 +66,57 @@ static Pos abs_pos(int X,int Y,int W,int H)
 }
 
 //锁定鼠标位置
-static void lock_pos(InterceptionContext context, InterceptionDevice device, InterceptionStroke* stroke,bool *lock,bool*flag) 
+static void lock_pos(InterceptionContext context, InterceptionDevice device, InterceptionStroke* stroke,bool *lock) 
 {
-	while (1) 
+	while (*lock)
 	{
-		if (*lock == 0) break;
+		//if (*lock == 0) break;
 		interception_send(context, device, stroke, 1);		
 		Sleep(1000);
+		
 	}
 	
 }
 
 //快捷键功能
 static void hot_key(Args ARG)
-{	
+{
+	thread Doopen,
+		   LockPos;
 	bool lock = 0;
+	bool open = 0;
+	InterceptionKeyStroke EnterPush = { 0x1c, INTERCEPTION_KEY_DOWN, NULL },
+						  EnterPop  = { 0x1c, INTERCEPTION_KEY_UP, NULL };
 	interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, INTERCEPTION_FILTER_KEY_DOWN);
 	while (interception_receive(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice = interception_wait(*(InterceptionContext*)ARG.Kcontext), (InterceptionStroke*)ARG.Kstroke, 1) > 0)
 	{
 		switch (ARG.Kkstroke.code)
 		{
+		//I键开核桃
+		case 0x17:
+			if (open == 0) 
+			{
+				open = 1;
+				auto doopen = [&ARG,&open, &EnterPush, &EnterPop]()
+				{
+					while (open)
+					{		
+						interception_send(*(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.M1push, 1);
+						Sleep(100);
+						interception_send(*(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.M1pop, 1);
+						Sleep(100);
+						interception_send(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice, (InterceptionStroke*)&EnterPush, 1);
+						Sleep(100);
+						interception_send(*(InterceptionContext*)ARG.Kcontext, *(InterceptionDevice*)ARG.Kdevice, (InterceptionStroke*)&EnterPop, 1);
+						Sleep(3000);
+					}
+				};
+				Doopen = thread(doopen);
+			}else{
+				open = 0;
+				Doopen.join();
+			}
+			break;
 
 		//O键锁定位置
 		case 0x18:
@@ -93,12 +124,11 @@ static void hot_key(Args ARG)
 			{
 				lock = 1;
 				interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_MOVE);
-				thread LockPos(lock_pos, *(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.MPos, &lock,ARG.flag);
-				LockPos.detach();
-			}
-			else
-			{
+				LockPos = thread(lock_pos, *(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.MPos, &lock);
+				//LockPos.detach();
+			}else{
 				lock = 0;
+				LockPos.join();
 				interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_NONE);
 			}
 			break;
@@ -108,9 +138,16 @@ static void hot_key(Args ARG)
 			interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, NULL);
 			interception_destroy_context(*(InterceptionContext*)ARG.Kcontext);
 			interception_destroy_context(*(InterceptionContext*)ARG.Mcontext);
-			lock = 0; interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_NONE);
-			Sleep(1001);
-			*(int*)ARG.flag = 1;			
+			interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_NONE);
+			if (open == 1) {
+				open = 0;
+				Doopen.join();
+			}
+			if (lock == 1) {
+				lock = 0;
+				LockPos.join();
+			}
+			*(int*)ARG.flag = 1;
 			break;
 
 		default:
@@ -142,10 +179,10 @@ int main()
 	InterceptionMouseStroke&	Mkstroke = *(InterceptionMouseStroke*)&Mstroke;
 	InterceptionContext			Kcontext,Mcontext;
 	InterceptionDevice			Kdevice,Mdevice;
-	InterceptionKeyStroke		ESCpush = { 0x01 ,INTERCEPTION_KEY_DOWN ,NULL }, ESCpop = { 0x01,INTERCEPTION_KEY_UP,NULL };
-	InterceptionMouseStroke		M1push = { INTERCEPTION_MOUSE_LEFT_BUTTON_DOWN, INTERCEPTION_MOUSE_MOVE_RELATIVE ,NULL,0,0 ,NULL },
-								M1pop = { INTERCEPTION_MOUSE_LEFT_BUTTON_UP, INTERCEPTION_MOUSE_MOVE_RELATIVE ,NULL,0,0 ,NULL },
-								MPos = { INTERCEPTION_FILTER_MOUSE_MOVE, INTERCEPTION_MOUSE_MOVE_ABSOLUTE ,NULL,核桃.X,核桃.Y ,NULL};
+	InterceptionKeyStroke		ESCpush = { 0x01 ,INTERCEPTION_KEY_DOWN ,NULL }, ESCpop = { 0x01,INTERCEPTION_KEY_UP,0 };
+	InterceptionMouseStroke		M1push = { INTERCEPTION_MOUSE_LEFT_BUTTON_DOWN, INTERCEPTION_MOUSE_MOVE_RELATIVE ,0 ,0 ,0 ,0 },
+								M1pop = { INTERCEPTION_MOUSE_LEFT_BUTTON_UP, INTERCEPTION_MOUSE_MOVE_RELATIVE ,0 ,0 ,0 ,0 },
+								MPos = { INTERCEPTION_FILTER_MOUSE_MOVE, INTERCEPTION_MOUSE_MOVE_ABSOLUTE ,0 ,核桃.X ,核桃.Y ,0};
 	
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);//提升进程优先级
 	cout << get_time().str(); wcout << "当前OP版本：" << vers << "\n";
@@ -223,6 +260,7 @@ int main()
 			break;
 	}
 	Sleep(1000);
+	cout << get_time().str() << "启动自动开核桃（左键+回车循环），请按 "; 青底 黑字 cout << "[ I ]"; 还原 cout << " 键\n";
 	cout << get_time().str() << "若要锁定鼠标到第一个核桃的位置，请按 "; 青底 黑字 cout << "[ O ]"; 还原 cout << " 键\n";
 	cout << get_time().str() << "程序运行时会保持游戏窗口处于前台激活，若要手动退出请按 "; 青底 黑字 cout << "[ P ]"; 还原 cout << " 键\n";
 	Sleep(1500);
@@ -235,7 +273,7 @@ int main()
 		&Mdevice,
 		&Kdevice,
 		&Kstroke,
-		&MPos,
+		&MPos,&M1push,&M1pop,
 		Kkstroke
 	});
 
@@ -250,6 +288,7 @@ int main()
 			//主动退出
 			if (flag == 1)
 			{
+				op.SetWindowState(reinterpret_cast<long&>(hwnd_console), 1, &tmp);
 				op.SetWindowState(reinterpret_cast<long&>(hwnd_console), 7, &tmp);
 				cout << "\n" << get_time().str() << "已主动退出\n";
 				return -1;
@@ -282,11 +321,11 @@ int main()
 		if (retcmp) {
 			cout << get_time().str(); 红底 cout << "氧气过低"; 还原 cout << "\n";
 			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1push, 1);
-			Sleep(50);
+			Sleep(100);
 			interception_send(Mcontext, Mdevice, (InterceptionStroke*)&M1pop, 1);
-			Sleep(150);
+			Sleep(200);
 			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpush, 1);
-			Sleep(50);
+			Sleep(100);
 			interception_send(Kcontext, Kdevice, (InterceptionStroke*)&ESCpop, 1);
 			cout << get_time().str() << "尝试暂停第 "; 绿字 cout << i + 1; 还原 cout << " 次\n";
 			Sleep(1000);
