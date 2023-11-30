@@ -137,6 +137,7 @@
     <ClInclude Include="ColorfulConsoleIO.hpp" />
     <ClInclude Include="Interception\interception.h" />
     <ClInclude Include="Op\libop.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Interception\interception.dll" />
@@ -151,6 +152,12 @@
     <Library Include="Op\bin\x86\op_x86.lib" />
     <Library Include="Op\bin\x86\pyop.lib" />
     <Library Include="Op\bin\x86\tools.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="墙中人.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="图标.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

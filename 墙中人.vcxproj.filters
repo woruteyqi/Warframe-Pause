@@ -47,6 +47,9 @@
     <ClInclude Include="Interception\interception.h">
       <Filter>Interception</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Op\op_x64.dll">
@@ -81,5 +84,15 @@
     <Library Include="Op\bin\x86\tools.lib">
       <Filter>Op\bin\x86</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="墙中人.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="图标.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
