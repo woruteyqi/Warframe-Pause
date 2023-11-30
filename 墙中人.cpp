@@ -70,9 +70,9 @@ static void lock_pos(InterceptionContext context, InterceptionDevice device, Int
 {
 	while (1) 
 	{
-		if (*lock == 0)break;
+		if (*lock == 0) break;
 		interception_send(context, device, stroke, 1);		
-		Sleep(200);
+		Sleep(1000);
 	}
 	
 }
@@ -92,12 +92,14 @@ static void hot_key(Args ARG)
 			if (lock == 0)
 			{
 				lock = 1;
+				interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_MOVE);
 				thread LockPos(lock_pos, *(InterceptionContext*)ARG.Mcontext, *(InterceptionDevice*)ARG.Mdevice, (InterceptionStroke*)ARG.MPos, &lock,ARG.flag);
 				LockPos.detach();
 			}
 			else
 			{
 				lock = 0;
+				interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_NONE);
 			}
 			break;
 
@@ -106,8 +108,8 @@ static void hot_key(Args ARG)
 			interception_set_filter(*(InterceptionContext*)ARG.Kcontext, interception_is_keyboard, NULL);
 			interception_destroy_context(*(InterceptionContext*)ARG.Kcontext);
 			interception_destroy_context(*(InterceptionContext*)ARG.Mcontext);
-			lock = 0;
-			Sleep(250);//让新开的线程都退出再结束程序主线程
+			lock = 0; interception_set_filter(*(InterceptionContext*)ARG.Mcontext, interception_is_mouse, INTERCEPTION_FILTER_MOUSE_NONE);
+			Sleep(1001);
 			*(int*)ARG.flag = 1;			
 			break;
 
